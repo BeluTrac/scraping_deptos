@@ -32,6 +32,7 @@ next_page = 'https://clasificados.lavoz.com.ar/inmuebles/departamentos/2-dormito
 links = []
 while(1):
   # # Espero a que cargue la pagina
+  print("Nueva pagina")
   driver.get(next_page)
   WebDriverWait(driver, timeout=1)
   driver.execute_script("window.scrollTo(0, document.body.scrollHeight);") 
@@ -51,7 +52,32 @@ while(1):
   if next_page == None:
     break
 
+driver.close()
+options = webdriver.ChromeOptions() # Usamos chrome, se podria usar otro.
+#options.add_argument('--headless') # Chromium sin interfaz grafica
+options.add_argument('--no-sandbox') # Seguridad
+options.add_argument('--disable-dev-shm-usage') # configuracion de linux
+#options.add_argument('--user-agent=""Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Mobile Safari/537.36""') # user agent
 
+driver_path = '/home/belutrac/Documentos/scraping_deptos/chromedriver'
+driver = webdriver.Chrome(driver_path,chrome_options = options)
+
+next_page = 'https://www.zonaprop.com.ar/departamentos-alquiler-general-paz-cordoba-mas-de-2-habitaciones-orden-publicado-descendente.html'
+driver.get(next_page)
+WebDriverWait(driver, timeout=2)
+
+
+datos = driver.find_elements_by_class_name('postingCardTitle')
+a_tag = [a.find_element_by_tag_name("a").get_attribute("href") for a in datos]
+#print("Empiezo con la nueva pagina")
+#driver.execute_script("window.scrollTo(0, document.body.scrollHeight);") 
+#next_page = driver.find_element_by_xpath('//*[@id="react-paging"]/div/ul/li[3]/a')
+#next_page.click()
+
+#driver.save_screenshot('screenshot_google.png')
+
+driver.close()
+links.extend(a_tag)
 
 gs = gspread.service_account(filename = "/home/belutrac/Documentos/scraping_deptos/zeta-rush-332114-45d522cbfb7c.json")
 hoja = gs.open_by_url("https://docs.google.com/spreadsheets/d/19HUgkqo3uPXozf7PeaGg1MIGnD0GPQOmZyKjMNnjCWc/edit#gid=0")
